@@ -56,6 +56,7 @@
         .btn-danger { background: var(--danger); }
         .btn-success { background: var(--success); }
         .btn-info { background: var(--cyan-dark); }
+        .btn-warning { background: var(--warning); color: #333; }
         .btn-outline { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); }
         .btn-outline:hover { background: var(--primary-blue); color: white; }
 
@@ -89,6 +90,10 @@
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
         .status-success { background: #d1fae5; color: #065f46; }
         .status-error { background: #fee2e2; color: #991b1b; }
+        
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 5px; border-radius: 5px; transition: 0.2s; box-shadow: none; }
+        .action-btn.edit-btn { color: var(--primary-blue); }
+        .action-btn.edit-btn:hover { background: #e0f0ff; transform: scale(1.1); }
 
         .settings-box { background: #fdfdfd; padding: 20px; border-radius: 12px; border: 1px dashed #b9c4d1; margin-bottom: 25px; }
 
@@ -97,6 +102,7 @@
         .toast { background: #2c3e50; color: white; padding: 15px 25px; border-radius: 8px; margin-top: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s ease forwards, fadeOut 0.5s ease 4s forwards; font-weight: bold; border-right: 5px solid; }
         .toast.success { border-color: var(--success); }
         .toast.error { border-color: var(--danger); }
+        .toast.warning { border-color: var(--warning); }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
 
@@ -125,7 +131,7 @@
         @media print {
             @page { margin: 15mm; size: A4 portrait; }
             body { background: white !important; color: black !important; font-family: 'Times New Roman', serif; }
-            .nav-btn, .footer-wrapper, .school-header, #login-section, #student-section, .dashboard-actions, .settings-box, .search-box, .action-icon { display: none !important; }
+            .nav-btn, .footer-wrapper, .school-header, #login-section, #student-section, .dashboard-actions, .settings-box, .search-box, .action-btn { display: none !important; }
             .glass-panel { box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; background: transparent !important; }
             .print-only { display: block; }
             .print-header { display: flex; justify-content: space-between; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 20px; text-align: center; font-weight: bold; font-size: 14px; }
@@ -135,6 +141,7 @@
             .report-card { flex: 1; border: 1px solid #000 !important; padding: 10px !important; box-shadow: none !important; }
             table { border-collapse: collapse; width: 100%; font-size: 12px; }
             th, td { border: 1px solid #000 !important; padding: 6px !important; text-align: center; }
+            th.no-print, td.no-print { display: none !important; }
             th { background-color: #eee !important; -webkit-print-color-adjust: exact; }
             .signatures { display: flex; justify-content: space-around; margin-top: 40px; font-weight: bold; page-break-inside: avoid; }
         }
@@ -152,8 +159,9 @@
     <div class="content-placeholder">
         
         <div id="student-section" class="glass-panel">
-            <h2 class="section-title"><i class="fas fa-edit"></i> تسجيل الدخول والمشكلات</h2>
+            <h2 class="section-title" id="formTitle"><i class="fas fa-edit"></i> تسجيل الدخول والمشكلات</h2>
             <form id="tofasForm" onsubmit="submitForm(event)">
+                <input type="hidden" id="editRecordId" value="">
                 <div class="form-grid">
                     <div class="form-group">
                         <label>النوع:</label>
@@ -196,7 +204,8 @@
                         <textarea id="issueDetails" rows="3" placeholder="اشرح المشكلة إن وجدت، أو اتركها فارغة إذا تم الاختبار بنجاح..."></textarea>
                     </div>
                 </div>
-                <button type="submit" style="width: 100%; margin-top: 15px; font-size: 18px;"><i class="fas fa-paper-plane"></i> إرسال وحفظ البيانات</button>
+                <button type="submit" id="submitBtn" style="width: 100%; margin-top: 15px; font-size: 18px;"><i class="fas fa-paper-plane"></i> إرسال وحفظ البيانات</button>
+                <button type="button" id="cancelEditBtn" class="btn-warning hidden" onclick="cancelEdit()" style="width: 100%; margin-top: 10px; font-size: 16px;"><i class="fas fa-times"></i> إلغاء التعديل</button>
             </form>
         </div>
 
@@ -223,7 +232,7 @@
                 <div style="display:flex; gap:10px;">
                     <button onclick="window.print()" class="btn-outline"><i class="fas fa-print"></i> طباعة</button>
                     <button onclick="exportToCSV()" class="btn-success"><i class="fas fa-file-excel"></i> إكسيل</button>
-                    <button onclick="fetchCloudData()" id="refreshBtn" class="btn-info"><i class="fas fa-sync-alt"></i> جلب البيانات المركزية</button>
+                    <button onclick="fetchCloudData()" id="refreshBtn" class="btn-info"><i class="fas fa-sync-alt"></i> جلب المزامنة التلقائية</button>
                 </div>
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="ابحث بالاسم، الكود..." onkeyup="filterTable()">
@@ -275,6 +284,7 @@
                             <th>الحالة التشخيصية</th>
                             <th>التفاصيل</th>
                             <th class="no-print">وقت التسجيل</th>
+                            <th class="no-print">إجراء</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
@@ -333,10 +343,18 @@
     <div id="toast-container"></div>
 
     <script>
-        let defaultSettings = { grades: ['الصف الأول الثانوي'], systems: ['منتظم', 'خدمات'], scriptUrl: '' };
+        // دمج رابط السيرفر المباشر كإعداد افتراضي وثابت للعمل على GitHub بثبات
+        let defaultSettings = { 
+            grades: ['الصف الأول الثانوي'], 
+            systems: ['منتظم', 'خدمات'], 
+            scriptUrl: 'https://script.google.com/macros/s/AKfycbxxgHOvMjXzrC2aHNn3XLJ_UslWhs6YIo94e-bfowIHTFm9MZ_8slnD8J2o7bSTHrDu/exec' 
+        };
 
         function loadSettings() {
             const saved = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
+            // التحقق من وجود الرابط المدمج في حال كان الرابط المحفوظ فارغاً
+            if(!saved.scriptUrl) saved.scriptUrl = defaultSettings.scriptUrl;
+            
             document.getElementById('settingGrades').value = saved.grades.join(', ');
             document.getElementById('settingSystems').value = saved.systems.join(', ');
             document.getElementById('settingScriptUrl').value = saved.scriptUrl;
@@ -373,7 +391,7 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            toast.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> <span>${message}</span>`;
+            toast.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':type==='warning'?'exclamation-triangle':'exclamation-circle'}"></i> <span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 4000);
         }
@@ -388,14 +406,12 @@
             currentView = currentView === 'student' ? 'login' : 'student';
         }
 
-        // ================= الدخول وجلب البيانات السحابية المركزية =================
         function checkLogin() {
             if(document.getElementById('adminPwd').value === 'MrMahmoud') {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('admin-section').classList.remove('hidden');
                 document.getElementById('printDate').innerText = new Date().toLocaleDateString('ar-EG');
                 
-                // جلب البيانات فور تسجيل الدخول بدلاً من قراءة الذاكرة المحلية
                 fetchCloudData();
                 showToast('أهلاً بك، جاري سحب البيانات المركزية...', 'info');
             } else {
@@ -403,45 +419,48 @@
             }
         }
 
-        // دالة الاتصال المباشر بجداول جوجل لجلب كل الطلاب
         function fetchCloudData() {
             const settings = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
-            if(!settings.scriptUrl) {
-                showToast('الرجاء إدخال رابط Google Script في الإعدادات لعرض البيانات', 'warning');
-                updateDashboard([]); // عرض فارغ أو محلي
+            const finalUrl = settings.scriptUrl || defaultSettings.scriptUrl;
+            
+            if(!finalUrl) {
+                showToast('لم يتم العثور على رابط السيرفر', 'warning');
+                updateDashboard([]);
                 return;
             }
 
             const btn = document.getElementById('refreshBtn');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الجلب...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري المزامنة...';
 
-            fetch(settings.scriptUrl)
+            fetch(finalUrl)
                 .then(res => res.json())
                 .then(response => {
                     if(response.status === 'success') {
-                        // حفظ البيانات المستلمة محلياً لسهولة الفلترة والطباعة
                         localStorage.setItem('tofasData', JSON.stringify(response.data));
                         updateDashboard(response.data);
-                        showToast('تم سحب أحدث الكشوفات من السحابة بنجاح', 'success');
+                        showToast('تمت المزامنة اللحظية مع السحابة بنجاح', 'success');
                     } else {
                         showToast('خطأ من السيرفر: ' + response.message, 'error');
                     }
                 })
                 .catch(err => {
-                    showToast('فشل الاتصال بالإنترنت، جاري عرض آخر نسخة مسجلة محلياً', 'error');
+                    showToast('تم استخدام البيانات المحلية بسبب ضعف الاتصال', 'warning');
                     updateDashboard(JSON.parse(localStorage.getItem('tofasData')) || []);
                 })
                 .finally(() => {
-                    btn.innerHTML = '<i class="fas fa-sync-alt"></i> جلب البيانات المركزية';
+                    btn.innerHTML = '<i class="fas fa-sync-alt"></i> جلب المزامنة التلقائية';
                 });
         }
 
-        // ================= إرسال بيانات الطالب للسحابة =================
         function submitForm(e) {
             e.preventDefault();
+            const editId = document.getElementById('editRecordId').value;
             const code = document.getElementById('studentCode').value.trim();
+            const actionType = editId ? 'edit' : 'add';
+            
             const data = {
-                id: Date.now(),
+                action: actionType,
+                id: editId || Date.now(),
                 timestamp: new Date().toLocaleString('ar-EG'),
                 gender: document.getElementById('studentGender').value,
                 code: code,
@@ -453,27 +472,73 @@
             };
 
             const settings = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
-            if(!settings.scriptUrl) {
-                showToast('لم يتم إعداد السيرفر. يرجى مراجعة الكنترول.', 'error');
-                return;
-            }
+            const finalUrl = settings.scriptUrl || defaultSettings.scriptUrl;
 
-            // إرسال البيانات مباشرة للسحابة دون الاعتماد على الذاكرة المحلية فقط
-            showToast('جاري إرسال بياناتك للمنظومة المركزية...', 'info');
-            fetch(settings.scriptUrl, {
+            showToast('جاري حفظ ومزامنة البيانات عبر السحابة...', 'info');
+            
+            // إضافة البيانات محلياً بشكل استباقي لتسريع الواجهة
+            let localData = JSON.parse(localStorage.getItem('tofasData')) || [];
+            if(actionType === 'edit') {
+                const index = localData.findIndex(r => r.id == data.id);
+                if(index !== -1) localData[index] = data;
+            } else {
+                localData.push(data);
+            }
+            localStorage.setItem('tofasData', JSON.stringify(localData));
+            updateDashboard(localData);
+
+            // الإرسال الفعلي للسيرفر
+            fetch(finalUrl, {
                 method: 'POST', mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             }).then(() => {
-                showToast('تم التسجيل وحفظ الحالة بنجاح', 'success');
-                document.getElementById('tofasForm').reset();
-                toggleDetailsReq();
+                showToast(actionType === 'edit' ? 'تم تعديل البيانات بنجاح' : 'تم التسجيل وحفظ الحالة بنجاح', 'success');
+                cancelEdit();
+                // محاولة مزامنة السحابة للتأكد من التطابق
+                setTimeout(() => fetchCloudData(), 2000); 
             }).catch(e => {
-                showToast('حدث خطأ في الإرسال، تحقق من الإنترنت.', 'error');
+                showToast('تم الحفظ محلياً. قد يكون هناك تأخير في وصولها لجوجل شيت', 'warning');
             });
         }
 
-        // ================= بناء لوحة التحكم =================
+        // دالة التعديل (نقل البيانات للفورم)
+        function editRecord(idStr) {
+            const localData = JSON.parse(localStorage.getItem('tofasData')) || [];
+            const record = localData.find(r => r.id == idStr);
+            if(record) {
+                if(currentView !== 'student') toggleViews();
+                
+                document.getElementById('editRecordId').value = record.id;
+                document.getElementById('studentGender').value = record.gender;
+                document.getElementById('studentCode').value = record.code;
+                document.getElementById('studentName').value = record.name;
+                document.getElementById('studentGrade').value = record.grade;
+                document.getElementById('studentSystem').value = record.system;
+                document.getElementById('issueType').value = record.type;
+                document.getElementById('issueDetails').value = record.details === 'لا يوجد' ? '' : record.details;
+                
+                toggleDetailsReq();
+                document.getElementById('formTitle').innerHTML = '<i class="fas fa-edit"></i> تعديل بيانات الطالب';
+                document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i> حفظ التعديلات والمزامنة';
+                document.getElementById('submitBtn').className = 'btn-warning';
+                document.getElementById('cancelEditBtn').classList.remove('hidden');
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                showToast('تم تحميل البيانات للتعديل', 'info');
+            }
+        }
+
+        function cancelEdit() {
+            document.getElementById('tofasForm').reset();
+            document.getElementById('editRecordId').value = '';
+            document.getElementById('formTitle').innerHTML = '<i class="fas fa-edit"></i> تسجيل الدخول والمشكلات';
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-paper-plane"></i> إرسال وحفظ البيانات';
+            document.getElementById('submitBtn').className = '';
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+            toggleDetailsReq();
+        }
+
         function updateDashboard(recordsData) {
             const records = recordsData || [];
             let stats = { tot: records.length, tB: 0, tG: 0, regTot: 0, regB: 0, regG: 0, servTot: 0, servB: 0, servG: 0, issuesTot: 0, successTot: 0, issuesMap: {} };
@@ -503,6 +568,9 @@
                     <td><span class="status-badge ${badgeClass}">${rec.type}</span></td>
                     <td style="font-size:12px; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${rec.details}">${rec.details}</td>
                     <td class="no-print" style="font-size:11px; color:#777;">${rec.timestamp}</td>
+                    <td class="no-print">
+                        <button class="action-btn edit-btn" onclick="editRecord('${rec.id}')" title="تعديل"><i class="fas fa-edit"></i></button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
