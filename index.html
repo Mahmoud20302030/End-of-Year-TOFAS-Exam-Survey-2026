@@ -94,6 +94,8 @@
         .action-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 5px; border-radius: 5px; transition: 0.2s; box-shadow: none; }
         .action-btn.edit-btn { color: var(--primary-blue); }
         .action-btn.edit-btn:hover { background: #e0f0ff; transform: scale(1.1); }
+        .action-btn.delete-btn { color: var(--danger); margin-right: 5px; }
+        .action-btn.delete-btn:hover { background: #fee2e2; transform: scale(1.1); }
 
         .settings-box { background: #fdfdfd; padding: 20px; border-radius: 12px; border: 1px dashed #b9c4d1; margin-bottom: 25px; }
 
@@ -539,6 +541,36 @@
             toggleDetailsReq();
         }
 
+        // دالة الحذف الجديدة
+        function deleteRecord(idStr) {
+            if(confirm('هل أنت متأكد من حذف بيانات هذا الطالب نهائياً؟')) {
+                let localData = JSON.parse(localStorage.getItem('tofasData')) || [];
+                const recordIndex = localData.findIndex(r => r.id == idStr);
+                
+                if(recordIndex !== -1) {
+                    // حذف محلي
+                    localData.splice(recordIndex, 1);
+                    localStorage.setItem('tofasData', JSON.stringify(localData));
+                    updateDashboard(localData);
+                    showToast('جاري إرسال أمر الحذف للسحابة...', 'info');
+
+                    const settings = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
+                    const finalUrl = settings.scriptUrl || defaultSettings.scriptUrl;
+
+                    // إرسال طلب الحذف للسيرفر
+                    fetch(finalUrl, {
+                        method: 'POST', mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'delete', id: idStr })
+                    }).then(() => {
+                        showToast('تم حذف بيانات الطالب بنجاح', 'success');
+                    }).catch(e => {
+                        showToast('تم الحذف محلياً. قد يكون هناك تأخير في وصوله لجوجل شيت', 'warning');
+                    });
+                }
+            }
+        }
+
         function updateDashboard(recordsData) {
             const records = recordsData || [];
             let stats = { tot: records.length, tB: 0, tG: 0, regTot: 0, regB: 0, regG: 0, servTot: 0, servB: 0, servG: 0, issuesTot: 0, successTot: 0, issuesMap: {} };
@@ -570,6 +602,7 @@
                     <td class="no-print" style="font-size:11px; color:#777;">${rec.timestamp}</td>
                     <td class="no-print">
                         <button class="action-btn edit-btn" onclick="editRecord('${rec.id}')" title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" onclick="deleteRecord('${rec.id}')" title="حذف"><i class="fas fa-trash-alt"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
