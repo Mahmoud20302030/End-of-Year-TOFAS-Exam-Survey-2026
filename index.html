@@ -6,6 +6,7 @@
     <title>منظومة توفاس التفاعلية - مدرسة محمد هاشم النقيب</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         /* ================= التنسيقات العامة والألوان ================= */
@@ -31,6 +32,9 @@
             background: linear-gradient(135deg, var(--cyan-dark) 0%, var(--cyan-light) 100%);
             background-attachment: fixed; color: #333;
         }
+
+        /* تنسيق خاص لتوافق SweetAlert مع نوع الخط */
+        .swal2-popup { font-family: 'Tajawal', sans-serif !important; }
 
         .school-header { text-align: center; color: white; padding: 25px 10px; text-shadow: 1px 2px 5px rgba(0,0,0,0.4); }
         .school-header h1 { margin: 0; font-size: 32px; font-weight: 900; letter-spacing: 1px; }
@@ -231,9 +235,10 @@
             <h2 class="section-title"><i class="fas fa-chart-line"></i> لوحة الإدارة والتقرير التفصيلي (متصلة بالسحابة)</h2>
             
             <div class="controls-bar dashboard-actions">
-                <div style="display:flex; gap:10px;">
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
                     <button onclick="window.print()" class="btn-outline"><i class="fas fa-print"></i> طباعة</button>
                     <button onclick="exportToCSV()" class="btn-success"><i class="fas fa-file-excel"></i> إكسيل</button>
+                    <button onclick="removeDuplicates()" class="btn-warning"><i class="fas fa-magic"></i> إزالة التكرار</button>
                     <button onclick="fetchCloudData()" id="refreshBtn" class="btn-info"><i class="fas fa-sync-alt"></i> جلب المزامنة التلقائية</button>
                 </div>
                 <div class="search-box">
@@ -345,7 +350,6 @@
     <div id="toast-container"></div>
 
     <script>
-        // دمج رابط السيرفر المباشر كإعداد افتراضي وثابت للعمل على GitHub بثبات
         let defaultSettings = { 
             grades: ['الصف الأول الثانوي'], 
             systems: ['منتظم', 'خدمات'], 
@@ -354,7 +358,6 @@
 
         function loadSettings() {
             const saved = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
-            // التحقق من وجود الرابط المدمج في حال كان الرابط المحفوظ فارغاً
             if(!saved.scriptUrl) saved.scriptUrl = defaultSettings.scriptUrl;
             
             document.getElementById('settingGrades').value = saved.grades.join(', ');
@@ -417,7 +420,13 @@
                 fetchCloudData();
                 showToast('أهلاً بك، جاري سحب البيانات المركزية...', 'info');
             } else {
-                showToast('كلمة المرور غير صحيحة', 'error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'كلمة المرور غير صحيحة!',
+                    confirmButtonText: 'حسناً',
+                    confirmButtonColor: '#004b99'
+                });
             }
         }
 
@@ -460,6 +469,27 @@
             const code = document.getElementById('studentCode').value.trim();
             const actionType = editId ? 'edit' : 'add';
             
+            let localData = JSON.parse(localStorage.getItem('tofasData')) || [];
+
+            // التحقق من تكرار الكود
+            if (actionType === 'add') {
+                if (localData.some(r => r.code === code)) {
+                    Swal.fire({
+                        icon: 'error', title: 'عذراً...', text: 'كود الطالب مسجل مسبقاً! الرجاء مراجعة البيانات.',
+                        confirmButtonText: 'حسناً', confirmButtonColor: '#004b99'
+                    });
+                    return;
+                }
+            } else if (actionType === 'edit') {
+                if (localData.some(r => r.code === code && String(r.id) !== String(editId))) {
+                    Swal.fire({
+                        icon: 'error', title: 'عذراً...', text: 'هذا الكود مسجل لطالب آخر بالفعل! الرجاء مراجعة البيانات.',
+                        confirmButtonText: 'حسناً', confirmButtonColor: '#004b99'
+                    });
+                    return;
+                }
+            }
+            
             const data = {
                 action: actionType,
                 id: editId || Date.now(),
@@ -478,10 +508,8 @@
 
             showToast('جاري حفظ ومزامنة البيانات عبر السحابة...', 'info');
             
-            // إضافة البيانات محلياً بشكل استباقي لتسريع الواجهة
-            let localData = JSON.parse(localStorage.getItem('tofasData')) || [];
             if(actionType === 'edit') {
-                const index = localData.findIndex(r => r.id == data.id);
+                const index = localData.findIndex(r => String(r.id) === String(data.id));
                 if(index !== -1) localData[index] = data;
             } else {
                 localData.push(data);
@@ -489,7 +517,6 @@
             localStorage.setItem('tofasData', JSON.stringify(localData));
             updateDashboard(localData);
 
-            // الإرسال الفعلي للسيرفر
             fetch(finalUrl, {
                 method: 'POST', mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
@@ -497,17 +524,15 @@
             }).then(() => {
                 showToast(actionType === 'edit' ? 'تم تعديل البيانات بنجاح' : 'تم التسجيل وحفظ الحالة بنجاح', 'success');
                 cancelEdit();
-                // محاولة مزامنة السحابة للتأكد من التطابق
                 setTimeout(() => fetchCloudData(), 2000); 
             }).catch(e => {
                 showToast('تم الحفظ محلياً. قد يكون هناك تأخير في وصولها لجوجل شيت', 'warning');
             });
         }
 
-        // دالة التعديل (نقل البيانات للفورم)
         function editRecord(idStr) {
             const localData = JSON.parse(localStorage.getItem('tofasData')) || [];
-            const record = localData.find(r => r.id == idStr);
+            const record = localData.find(r => String(r.id) === String(idStr));
             if(record) {
                 if(currentView !== 'student') toggleViews();
                 
@@ -541,34 +566,108 @@
             toggleDetailsReq();
         }
 
-        // دالة الحذف الجديدة
         function deleteRecord(idStr) {
-            if(confirm('هل أنت متأكد من حذف بيانات هذا الطالب نهائياً؟')) {
-                let localData = JSON.parse(localStorage.getItem('tofasData')) || [];
-                const recordIndex = localData.findIndex(r => r.id == idStr);
-                
-                if(recordIndex !== -1) {
-                    // حذف محلي
-                    localData.splice(recordIndex, 1);
-                    localStorage.setItem('tofasData', JSON.stringify(localData));
-                    updateDashboard(localData);
-                    showToast('جاري إرسال أمر الحذف للسحابة...', 'info');
+            Swal.fire({
+                title: 'تأكيد الحذف',
+                text: 'هل أنت متأكد من حذف بيانات هذا الطالب نهائياً؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'نعم، احذف السجل',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let localData = JSON.parse(localStorage.getItem('tofasData')) || [];
+                    const recordIndex = localData.findIndex(r => String(r.id) === String(idStr));
+                    
+                    if(recordIndex !== -1) {
+                        localData.splice(recordIndex, 1);
+                        localStorage.setItem('tofasData', JSON.stringify(localData));
+                        updateDashboard(localData);
+                        showToast('جاري إرسال أمر الحذف للسحابة...', 'info');
+
+                        const settings = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
+                        const finalUrl = settings.scriptUrl || defaultSettings.scriptUrl;
+
+                        fetch(finalUrl, {
+                            method: 'POST', mode: 'no-cors',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'delete', id: idStr })
+                        }).then(() => {
+                            Swal.fire('تم الحذف!', 'تم حذف بيانات الطالب بنجاح.', 'success');
+                        }).catch(e => {
+                            showToast('تم الحذف محلياً. قد يكون هناك تأخير في وصوله للسحابة', 'warning');
+                        });
+                    }
+                }
+            });
+        }
+
+        // إزالة الأكواد المكررة والاحتفاظ بالنسخة الأحدث
+        function removeDuplicates() {
+            Swal.fire({
+                title: 'إزالة التكرار',
+                text: 'سيتم فحص الأكواد المكررة والاحتفاظ بأحدث إدخال لكل كود، وحذف الباقي. هل تريد الاستمرار؟',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#004b99',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'نعم، نفذ العملية',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let localData = JSON.parse(localStorage.getItem('tofasData')) || [];
+                    let grouped = {};
+                    let finalLocalData = [];
+                    let idsToDelete = [];
+
+                    // تجميع السجلات حسب الكود
+                    localData.forEach(r => {
+                        if(!grouped[r.code]) grouped[r.code] = [];
+                        grouped[r.code].push(r);
+                    });
+
+                    // تصفية السجلات والاحتفاظ بالأحدث
+                    for(let code in grouped) {
+                        let records = grouped[code];
+                        if (records.length > 1) {
+                            records.sort((a,b) => b.id - a.id); // ترتيب تنازلي حسب الآي دي (يفترض أنه يمثل الوقت)
+                            finalLocalData.push(records[0]); // الاحتفاظ بالأحدث
+                            for(let i = 1; i < records.length; i++) {
+                                idsToDelete.push(records[i].id); // إضافة الباقي لقائمة الحذف
+                            }
+                        } else {
+                            finalLocalData.push(records[0]);
+                        }
+                    }
+
+                    if (idsToDelete.length === 0) {
+                        Swal.fire('تم الفحص', 'لا توجد أكواد مكررة في السجلات الحالية.', 'success');
+                        return;
+                    }
+
+                    // تحديث التخزين المحلي والواجهة
+                    localStorage.setItem('tofasData', JSON.stringify(finalLocalData));
+                    updateDashboard(finalLocalData);
 
                     const settings = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
                     const finalUrl = settings.scriptUrl || defaultSettings.scriptUrl;
 
-                    // إرسال طلب الحذف للسيرفر
-                    fetch(finalUrl, {
-                        method: 'POST', mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'delete', id: idStr })
-                    }).then(() => {
-                        showToast('تم حذف بيانات الطالب بنجاح', 'success');
-                    }).catch(e => {
-                        showToast('تم الحذف محلياً. قد يكون هناك تأخير في وصوله لجوجل شيت', 'warning');
+                    showToast(`جاري حذف ${idsToDelete.length} سجلات مكررة من السحابة...`, 'info');
+                    
+                    // إرسال طلبات الحذف للسحابة بشكل تسلسلي بسيط
+                    idsToDelete.forEach(id => {
+                        fetch(finalUrl, {
+                            method: 'POST', mode: 'no-cors',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'delete', id: id })
+                        });
                     });
+
+                    Swal.fire('تمت العملية', `تم التخلص من ${idsToDelete.length} سجلات مكررة بنجاح وتم الاحتفاظ بالنسخة الأحدث فقط.`, 'success');
                 }
-            }
+            });
         }
 
         function updateDashboard(recordsData) {
@@ -629,16 +728,30 @@
         }
 
         function clearData() {
-            if(confirm('تنبيه: هذا الإجراء سيمسح البيانات المعروضة محلياً فقط ولن يمسحها من Google Sheets. هل توافق؟')) {
-                localStorage.removeItem('tofasData');
-                updateDashboard([]);
-                showToast('تم تفريغ العرض بنجاح', 'success');
-            }
+            Swal.fire({
+                title: 'تنبيه خطير',
+                text: 'هذا الإجراء سيمسح البيانات المعروضة محلياً فقط ولن يمسحها من السحابة المركزية. هل توافق؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'نعم، قم بالتفريغ',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('tofasData');
+                    updateDashboard([]);
+                    Swal.fire('تم التفريغ!', 'تم تفريغ العرض بنجاح.', 'success');
+                }
+            });
         }
 
         function exportToCSV() {
             const records = JSON.parse(localStorage.getItem('tofasData')) || [];
-            if(records.length === 0) return showToast('لا توجد بيانات لتصديرها', 'error');
+            if(records.length === 0) {
+                Swal.fire('تنبيه', 'لا توجد بيانات لتصديرها.', 'info');
+                return;
+            }
 
             let csvContent = "\uFEFFالوقت,الكود,الاسم,النوع,الصف,النظام,نوع المشكلة,التفاصيل\n";
             records.forEach(r => {
