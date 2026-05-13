@@ -121,6 +121,44 @@
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
 
+        /* ================= تنسيقات شريط الإزالة الذكية  ================= */
+        .sync-progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,.1);
+        }
+        .sync-progress-bar {
+            height: 22px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--cyan-dark), var(--primary-blue));
+            background-size: 200% 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+            animation: gradientMove 2s linear infinite;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 100% 0; }
+            100% { background-position: -100% 0; }
+        }
+        .sync-stats-box {
+            display: flex; justify-content: space-around; background: #f8f9fa; padding: 15px; border-radius: 10px; border: 1px solid #dee2e6; margin-top: 15px;
+        }
+        .sync-stat-item { display: flex; flex-direction: column; align-items: center; }
+        .sync-stat-value { font-size: 28px; font-weight: 900; color: var(--primary-blue); }
+        .sync-stat-label { font-size: 13px; color: #6c757d; font-weight: bold; margin-top: 5px; }
+
+        /* ================= مؤشر مزامنة الخلفية العائم ================= */
+        .bg-sync-indicator {
+            position: fixed; bottom: 30px; left: 30px; background: rgba(0, 75, 153, 0.95); color: white;
+            padding: 12px 25px; border-radius: 30px; font-size: 14px; font-weight: bold;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 9998; display: flex; align-items: center; gap: 12px;
+            backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .bg-sync-indicator.hidden { transform: translateY(150px) scale(0.8); opacity: 0; }
+
         /* ================= الفوتر السيادي الأزرق والسماوي (كما هو) ================= */
         .footer-wrapper {
             padding: 80px 20px; background: var(--footer-bg); border-top: 3px solid var(--footer-cyan); 
@@ -512,6 +550,16 @@
     <div id="toast-container"></div>
 
     <script>
+        // ================= متغيرات الحماية لمنع الإغلاق =================
+        window.isBackgroundSyncActive = false;
+
+        window.addEventListener('beforeunload', function (e) {
+            if (window.isBackgroundSyncActive) {
+                e.preventDefault();
+                e.returnValue = 'تحذير: هناك عملية مزامنة وحذف تعمل في الخلفية الآن. إغلاق الصفحة سيؤدي إلى إيقافها وقد يترك بعض التكرارات على السيرفر. يرجى الانتظار حتى تنتهي.';
+            }
+        });
+
         let defaultSettings = { 
             grades: ['الصف الأول الثانوي'], 
             systems: ['منتظم', 'خدمات'], 
@@ -804,87 +852,194 @@
             });
         }
 
+        // ================= التنظيف الذكي والمزامنة الحية / العمل في الخلفية =================
         function removeDuplicatesFast() {
+            let localData = JSON.parse(localStorage.getItem('tofasData')) || [];
+            let grouped = {};
+            let finalLocalData = [];
+            let idsToDelete = [];
+
+            localData.forEach(r => {
+                let codeKey = String(r.code).trim().toLowerCase();
+                if(!grouped[codeKey]) grouped[codeKey] = [];
+                grouped[codeKey].push(r);
+            });
+
+            for(let code in grouped) {
+                let records = grouped[code];
+                if (records.length > 1) {
+                    records.sort((a,b) => b.id - a.id); 
+                    finalLocalData.push(records[0]); 
+                    for(let i = 1; i < records.length; i++) {
+                        idsToDelete.push(records[i].id); 
+                    }
+                } else {
+                    finalLocalData.push(records[0]);
+                }
+            }
+
+            if (idsToDelete.length === 0) {
+                Swal.fire({ 
+                    title: 'قاعدة البيانات نقية', 
+                    html: '<div style="font-size: 50px; color: #28a745; margin-bottom: 15px;"><i class="fas fa-shield-alt"></i></div><p style="font-weight:bold; font-size:16px;">لا توجد أي سجلات مكررة في لوحة التحكم.</p>', 
+                    showConfirmButton: false, 
+                    timer: 2500,
+                    backdrop: `rgba(40, 167, 69, 0.1)`
+                });
+                return;
+            }
+
+            const totalDups = idsToDelete.length;
+            const originalCount = localData.length;
+            const finalCount = finalLocalData.length;
+
             Swal.fire({
-                title: 'التنظيف الذكي السريع',
-                text: 'سيتم فحص وإزالة التكرارات فوراً من لوحتك ليتم ترتيبها، وسيقوم النظام بتحديث السحابة تلقائياً في الخلفية دون تعطيل عملك. هل توافق؟',
-                icon: 'warning',
+                title: '<i class="fas fa-magic" style="color:var(--warning);"></i> معالج التنظيف الذكي',
+                html: `
+                    <div class="sync-stats-box">
+                        <div class="sync-stat-item">
+                            <span class="sync-stat-value">${originalCount}</span>
+                            <span class="sync-stat-label">الإجمالي الحالي</span>
+                        </div>
+                        <div class="sync-stat-item">
+                            <span class="sync-stat-value" style="color:var(--danger);">${totalDups}</span>
+                            <span class="sync-stat-label">التكرارات المكتشفة</span>
+                        </div>
+                        <div class="sync-stat-item">
+                            <span class="sync-stat-value" style="color:var(--success);">${finalCount}</span>
+                            <span class="sync-stat-label">الصافي بعد التنظيف</span>
+                        </div>
+                    </div>
+                    <p style="margin-top: 20px; font-size: 14px; color: #555; line-height: 1.6; font-weight: bold;">
+                        سيقوم النظام بالاحتفاظ بأحدث إدخال لكل طالب آلياً وإزالة النسخ القديمة لضمان دقة الكشوف. 
+                        يمكنك المتابعة الحية أو جعل النظام يعمل بصمت في الخلفية لتتمكن من استكمال عملك.
+                    </p>
+                    <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; margin-top: 15px; font-size: 12px; border: 1px solid #ffeeba;">
+                        <b><i class="fas fa-exclamation-circle"></i> ملاحظة هامة:</b> العمل في الخلفية يسمح لك بتصفح لوحتك واستكمال عملك، ولكن <u>يرجى عدم إغلاق المتصفح تماماً</u> حتى يختفي المؤشر العائم.
+                    </div>
+                `,
+                showDenyButton: true,
                 showCancelButton: true,
                 confirmButtonColor: '#004b99',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: '<i class="fas fa-bolt"></i> نعم، نظف الآن',
-                cancelButtonText: 'إلغاء'
+                denyButtonColor: '#17a2b8',
+                cancelButtonColor: '#dc3545',
+                confirmButtonText: '<i class="fas fa-eye"></i> متابعة المزامنة حياً',
+                denyButtonText: '<i class="fas fa-user-secret"></i> العمل في الخلفية (في نفس النافذة)',
+                cancelButtonText: '<i class="fas fa-times"></i> إلغاء',
+                allowOutsideClick: false
             }).then((result) => {
                 if (result.isConfirmed) {
-                    let localData = JSON.parse(localStorage.getItem('tofasData')) || [];
-                    let grouped = {};
-                    let finalLocalData = [];
-                    let idsToDelete = [];
-
-                    localData.forEach(r => {
-                        if(!grouped[r.code]) grouped[r.code] = [];
-                        grouped[r.code].push(r);
-                    });
-
-                    for(let code in grouped) {
-                        let records = grouped[code];
-                        if (records.length > 1) {
-                            records.sort((a,b) => b.id - a.id); 
-                            finalLocalData.push(records[0]); 
-                            for(let i = 1; i < records.length; i++) {
-                                idsToDelete.push(records[i].id); 
-                            }
-                        } else {
-                            finalLocalData.push(records[0]);
-                        }
-                    }
-
-                    if (idsToDelete.length === 0) {
-                        Swal.fire({ title: 'النظام نظيف', text: 'لا توجد أي سجلات مكررة في لوحتك.', icon: 'success', confirmButtonColor: '#28a745' });
-                        return;
-                    }
-
                     localStorage.setItem('tofasData', JSON.stringify(finalLocalData));
                     applySort(); 
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'تم التنظيف السريع بنجاح!',
-                        html: `
-                            <div style="text-align: right; font-size: 15px;">
-                                <p style="color: #28a745; font-weight: bold;"><i class="fas fa-check-circle"></i> تم إزالة <b>${idsToDelete.length}</b> سجل مكرر من لوحة التحكم.</p>
-                                <p style="font-size: 13px; color: #6c757d; margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
-                                    <i class="fas fa-sync fa-spin" style="color: #004b99;"></i> جاري الآن مزامنة هذا الحذف مع السيرفر السحابي ببطء في الخلفية. <b>يمكنك استكمال عملك الآن بشكل طبيعي جداً ولن يؤثر ذلك عليك.</b>
-                                </p>
-                            </div>
-                        `,
-                        confirmButtonText: 'إكمال العمل',
-                        confirmButtonColor: '#004b99'
-                    });
-
-                    syncDeletionsInBackground(idsToDelete);
+                    performLiveSync(idsToDelete, false);
+                } else if (result.isDenied) {
+                    localStorage.setItem('tofasData', JSON.stringify(finalLocalData));
+                    applySort(); 
+                    performLiveSync(idsToDelete, true);
                 }
             });
         }
 
-        async function syncDeletionsInBackground(idsList) {
+        async function performLiveSync(idsList, isBackground = false) {
+            const total = idsList.length;
+            let current = 0;
+            let successCount = 0;
+            let failCount = 0;
+            let bgIndicator = null;
+
+            // تفعيل حماية المتصفح من الإغلاق
+            window.isBackgroundSyncActive = true;
+
             const settings = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
             const finalUrl = settings.scriptUrl || defaultSettings.scriptUrl;
-            
-            for (let i = 0; i < idsList.length; i++) {
+
+            if (!isBackground) {
+                Swal.fire({
+                    title: 'جاري تحديث السحابة المركزية',
+                    html: `
+                        <div style="margin: 20px 0;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold;">
+                                <span id="sync-status" style="color: var(--primary-blue); font-size: 14px;"><i class="fas fa-cog fa-spin"></i> جاري إزالة التكرارات...</span>
+                                <span style="font-size: 14px; color: #555; font-family: monospace;"><span id="sync-count">0</span> / ${total}</span>
+                            </div>
+                            <div class="sync-progress-container">
+                                <div id="sync-progress" class="sync-progress-bar"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-around; font-size: 13px; margin-top: 15px; color: #777; font-weight: bold;">
+                                <span><i class="fas fa-check-circle" style="color: var(--success);"></i> نجاح: <span id="sync-success">0</span></span>
+                                <span><i class="fas fa-times-circle" style="color: var(--danger);"></i> فشل: <span id="sync-fail">0</span></span>
+                            </div>
+                        </div>
+                    `,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                });
+            } else {
+                bgIndicator = document.createElement('div');
+                bgIndicator.className = 'bg-sync-indicator';
+                bgIndicator.innerHTML = `<i class="fas fa-sync-alt fa-spin" style="font-size: 18px;"></i> <span style="letter-spacing: 0.5px;">مزامنة الخلفية: <b id="bg-sync-count" style="color:#00d2ff;">0</b> / ${total}</span>`;
+                document.body.appendChild(bgIndicator);
+            }
+
+            for (let i = 0; i < total; i++) {
                 try {
                     await fetch(finalUrl, {
                         method: 'POST', mode: 'no-cors',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ action: 'delete', id: idsList[i] })
                     });
-                    await new Promise(resolve => setTimeout(resolve, 800)); 
+                    successCount++;
                 } catch (error) {
-                    console.error('Background Sync Delete Error:', idsList[i]);
+                    console.error('Sync error on ID:', idsList[i]);
+                    failCount++;
                 }
+                
+                current++;
+                let percent = Math.round((current / total) * 100);
+                
+                if (!isBackground) {
+                    const progressEl = document.getElementById('sync-progress');
+                    const countEl = document.getElementById('sync-count');
+                    const successEl = document.getElementById('sync-success');
+                    const failEl = document.getElementById('sync-fail');
+                    
+                    if(progressEl) progressEl.style.width = percent + '%';
+                    if(countEl) countEl.innerText = current;
+                    if(successEl) successEl.innerText = successCount;
+                    if(failEl) failEl.innerText = failCount;
+                } else {
+                    const bgCountEl = document.getElementById('bg-sync-count');
+                    if(bgCountEl) bgCountEl.innerText = current;
+                }
+
+                await new Promise(r => setTimeout(r, 600)); 
             }
-            console.log("تمت مزامنة الحذف المتسلسل في الخلفية بنجاح.");
+
+            // تعطيل حماية المتصفح من الإغلاق بعد الانتهاء
+            window.isBackgroundSyncActive = false;
+
+            if (!isBackground) {
+                Swal.fire({
+                    icon: failCount === 0 ? 'success' : 'warning',
+                    title: 'اكتملت عملية التنظيف',
+                    html: `
+                        <div style="font-size: 16px; margin-top: 10px;">
+                            <p style="color: #28a745; font-weight: bold;"><i class="fas fa-check-double"></i> تمت المزامنة بنجاح: ${successCount} سجل</p>
+                            ${failCount > 0 ? `<p style="color: #dc3545; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> تعذر مزامنة: ${failCount} (سيتم محاولة حذفهم لاحقاً)</p>` : ''}
+                            <p style="font-size: 13px; color: #6c757d; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px;">تم ترتيب الكشوف وإزالة النسخ القديمة بالكامل. يمكنك متابعة العمل الآن.</p>
+                        </div>
+                    `,
+                    confirmButtonColor: '#004b99',
+                    confirmButtonText: '<i class="fas fa-clipboard-check"></i> العودة للوحة التحكم'
+                });
+            } else {
+                bgIndicator.classList.add('hidden');
+                setTimeout(() => bgIndicator.remove(), 600);
+                showToast(`اكتملت مزامنة الخلفية: تمت إزالة ${successCount} نسخة بنجاح`, failCount === 0 ? 'success' : 'warning');
+            }
         }
+        // ==============================================================================
 
         function applySort() {
             let recordsData = JSON.parse(localStorage.getItem('tofasData')) || [];
@@ -1109,7 +1264,6 @@
                 container.appendChild(pageDiv);
             }
             
-            // إعطاء المتصفح مهلة نصف ثانية لرسم الصفحات والتأكد من عدم وجود مساحات بيضاء قبل استدعاء نافذة الطباعة
             setTimeout(() => {
                 window.print();
             }, 500);
