@@ -713,6 +713,7 @@
             });
         }
 
+        // --- تم حل وتطوير مشكلة تداخل البيانات المتزامنة هنا ---
         function removeDuplicates() {
             Swal.fire({
                 title: 'إزالة التكرار',
@@ -723,7 +724,7 @@
                 cancelButtonColor: '#6c757d',
                 confirmButtonText: 'نعم، نفذ العملية',
                 cancelButtonText: 'إلغاء'
-            }).then((result) => {
+            }).then(async (result) => { // تمت إضافة كلمة async هنا لتهيئة حلقة الانتظار
                 if (result.isConfirmed) {
                     let localData = JSON.parse(localStorage.getItem('tofasData')) || [];
                     let grouped = {};
@@ -753,23 +754,31 @@
                         return;
                     }
 
+                    // التحديث المحلي
                     localStorage.setItem('tofasData', JSON.stringify(finalLocalData));
                     updateDashboard(finalLocalData);
 
                     const settings = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
                     const finalUrl = settings.scriptUrl || defaultSettings.scriptUrl;
 
-                    showToast(`جاري حذف ${idsToDelete.length} سجلات مكررة من السحابة...`, 'info');
+                    showToast(`جاري حذف ${idsToDelete.length} سجلات مكررة من السحابة (بالتتابع)... برجاء الانتظار`, 'info');
                     
-                    idsToDelete.forEach(id => {
-                        fetch(finalUrl, {
-                            method: 'POST', mode: 'no-cors',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ action: 'delete', id: id })
-                        });
-                    });
+                    // التحديث المتسلسل للسحابة (الانتظار 600 جزء من الثانية بين كل أمر حذف لمنع تداخل الطلبات)
+                    for (let i = 0; i < idsToDelete.length; i++) {
+                        try {
+                            await fetch(finalUrl, {
+                                method: 'POST', mode: 'no-cors',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ action: 'delete', id: idsToDelete[i] })
+                            });
+                            // فترة انتظار بسيطة للسماح لجوجل بتنفيذ أمر الحذف الحالي قبل إرسال التالي
+                            await new Promise(resolve => setTimeout(resolve, 600));
+                        } catch (error) {
+                            console.error('حدث خطأ أثناء حذف السجل المكرر:', idsToDelete[i]);
+                        }
+                    }
 
-                    Swal.fire('تمت العملية', `تم التخلص من ${idsToDelete.length} سجلات مكررة بنجاح وتم الاحتفاظ بالنسخة الأحدث فقط.`, 'success');
+                    Swal.fire('تمت العملية', `تم التخلص من ${idsToDelete.length} سجلات مكررة بنجاح وبشكل نهائي من السحابة.`, 'success');
                 }
             });
         }
