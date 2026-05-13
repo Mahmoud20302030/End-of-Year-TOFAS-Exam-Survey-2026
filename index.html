@@ -33,7 +33,6 @@
             background-attachment: fixed; color: #333;
         }
 
-        /* تنسيق خاص لتوافق SweetAlert مع نوع الخط */
         .swal2-popup { font-family: 'Tajawal', sans-serif !important; }
 
         .school-header { text-align: center; color: white; padding: 25px 10px; text-shadow: 1px 2px 5px rgba(0,0,0,0.4); }
@@ -41,61 +40,17 @@
         .school-header p { margin: 8px 0 0; font-size: 18px; color: #fff; font-weight: 500; background: rgba(0,0,0,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px;}
         .content-placeholder { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 20px; }
 
-        /* الحاويات الزجاجية */
         .glass-panel { background: var(--white-glass); backdrop-filter: blur(20px); border-radius: 20px; padding: 35px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); width: 100%; max-width: 850px; border: 1px solid rgba(255,255,255,0.7); transition: all 0.3s ease; }
-        .glass-panel.admin-panel { max-width: 1300px; padding: 30px; }
+        .glass-panel.admin-panel { max-width: 1400px; padding: 30px; }
         .hidden { display: none !important; }
 
         /* ================= زر منصة سباركس اليابانية 3D ================= */
-        .sprix-container {
-            margin-bottom: 35px;
-            text-align: center;
-            padding-bottom: 25px;
-            border-bottom: 2px dashed #ccc;
-        }
-        .sprix-btn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            background: linear-gradient(135deg, #e63946, #d90429);
-            color: #ffffff !important;
-            text-decoration: none;
-            font-size: 26px;
-            font-weight: 900;
-            padding: 18px 25px;
-            border-radius: 16px;
-            box-shadow: 0 10px 0 #8d0801, 0 15px 25px rgba(0,0,0,0.3);
-            transition: all 0.15s ease;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-            border: 2px solid rgba(255,255,255,0.3);
-            animation: sprixPulse 2s infinite;
-        }
-        .sprix-btn:hover {
-            background: linear-gradient(135deg, #d90429, #e63946);
-            color: #ffffff;
-        }
-        .sprix-btn:active {
-            transform: translateY(10px);
-            box-shadow: 0 0 0 #8d0801, 0 5px 10px rgba(0,0,0,0.3);
-            animation: none;
-        }
-        @keyframes sprixPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-        .sprix-hint {
-            display: inline-block;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #555;
-            font-weight: bold;
-            background: #fff3cd;
-            padding: 8px 15px;
-            border-radius: 8px;
-            border: 1px solid #ffeeba;
-        }
+        .sprix-container { margin-bottom: 35px; text-align: center; padding-bottom: 25px; border-bottom: 2px dashed #ccc; }
+        .sprix-btn { display: flex; justify-content: center; align-items: center; gap: 15px; background: linear-gradient(135deg, #e63946, #d90429); color: #ffffff !important; text-decoration: none; font-size: 26px; font-weight: 900; padding: 18px 25px; border-radius: 16px; box-shadow: 0 10px 0 #8d0801, 0 15px 25px rgba(0,0,0,0.3); transition: all 0.15s ease; text-shadow: 2px 2px 5px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.3); animation: sprixPulse 2s infinite; }
+        .sprix-btn:hover { background: linear-gradient(135deg, #d90429, #e63946); color: #ffffff; }
+        .sprix-btn:active { transform: translateY(10px); box-shadow: 0 0 0 #8d0801, 0 5px 10px rgba(0,0,0,0.3); animation: none; }
+        @keyframes sprixPulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        .sprix-hint { display: inline-block; margin-top: 20px; font-size: 14px; color: #555; font-weight: bold; background: #fff3cd; padding: 8px 15px; border-radius: 8px; border: 1px solid #ffeeba; }
 
         /* النصوص والمدخلات */
         h2.section-title { text-align: center; color: var(--primary-blue); margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px dashed #ccc; font-weight: 900;}
@@ -131,11 +86,14 @@
         .issues-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
         .issue-tag { background: #fee2e2; color: #991b1b; padding: 5px 10px; border-radius: 6px; font-size: 13px; font-weight: bold; }
 
-        /* جدول البيانات والبحث */
+        /* جدول البيانات والبحث والفرز */
         .controls-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-        .search-box { flex: 1; min-width: 250px; position: relative; }
+        .search-box { flex: 1; min-width: 200px; position: relative; }
         .search-box input { padding-right: 40px; border-radius: 30px; }
         .search-box i { position: absolute; right: 15px; top: 16px; color: #aaa; }
+        
+        .sort-box { flex: 0 1 200px; }
+        .sort-box select { padding: 12px; border-radius: 30px; border: 2px solid var(--primary-blue); font-weight: bold; color: var(--primary-blue); cursor: pointer; }
 
         .table-responsive { overflow-x: auto; max-height: 500px; overflow-y: auto; border: 1px solid #e1e8ed; border-radius: 12px; background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -145,6 +103,7 @@
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
         .status-success { background: #d1fae5; color: #065f46; }
         .status-error { background: #fee2e2; color: #991b1b; }
+        .device-badge { background: #e2e8f0; color: #475569; padding: 3px 8px; border-radius: 6px; font-size: 11px; display: inline-block; white-space: nowrap;}
         
         .action-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 5px; border-radius: 5px; transition: 0.2s; box-shadow: none; }
         .action-btn.edit-btn { color: var(--primary-blue); }
@@ -154,7 +113,6 @@
 
         .settings-box { background: #fdfdfd; padding: 20px; border-radius: 12px; border: 1px dashed #b9c4d1; margin-bottom: 25px; }
 
-        /* الإشعارات */
         #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
         .toast { background: #2c3e50; color: white; padding: 15px 25px; border-radius: 8px; margin-top: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s ease forwards, fadeOut 0.5s ease 4s forwards; font-weight: bold; border-right: 5px solid; }
         .toast.success { border-color: var(--success); }
@@ -163,7 +121,7 @@
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
 
-        /* ================= الفوتر السيادي الأزرق والسماوي ================= */
+        /* ================= الفوتر السيادي الأزرق والسماوي (كما هو) ================= */
         .footer-wrapper {
             padding: 80px 20px; background: var(--footer-bg); border-top: 3px solid var(--footer-cyan); 
             display: flex; justify-content: center; align-items: center; margin-top: auto;
@@ -183,72 +141,166 @@
         .center-prayer::before { content: "🦅"; font-size: 2.2rem; margin-bottom: 15px; opacity: 0.95; filter: drop-shadow(0 0 10px var(--footer-glow)); }
         .center-prayer::after { content: "🦅"; font-size: 2.2rem; margin-top: 15px; opacity: 0.95; filter: drop-shadow(0 0 10px var(--footer-glow)); transform: scaleX(-1); }
 
-        /* ================= تنسيقات الطباعة الاحترافية ================= */
+        /* ================= التنسيقات الحديدية للطباعة (تمنع التداخل 100%) ================= */
         .print-only { display: none; }
         
         @media print {
-            @page { margin: 10mm; size: A4 portrait; }
-            body { background: white !important; color: black !important; font-family: 'Times New Roman', serif; }
+            @page { 
+                size: A4 landscape; 
+                margin: 10mm; /* توحيد الهوامش */
+            } 
             
-            /* إخفاء الواجهات والأزرار الخاصة بالمتصفح */
+            body, html { 
+                background: white !important; color: black !important; 
+                font-family: 'Tajawal', 'Arial', sans-serif !important; 
+                direction: rtl !important; 
+                -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+                margin: 0 !important; padding: 0 !important; width: 100% !important;
+            }
+            
+            /* إخفاء واجهة المستخدم العادية بالكامل */
             .nav-btn, .footer-wrapper, .school-header, #login-section, #student-section, 
-            .dashboard-actions, .settings-box, .search-box, .action-btn, #toast-container, 
-            .swal2-container { display: none !important; }
+            .dashboard-actions, .settings-box, .search-box, .sort-box, .action-btn, #toast-container, 
+            .swal2-container, .sprix-container, .table-responsive, .analytics-section { display: none !important; }
             
-            /* تهيئة الحاوية الأساسية لتشغل الورقة بالكامل */
-            body, .content-placeholder, .glass-panel { 
+            body, .content-placeholder, .glass-panel, #admin-section { 
                 display: block !important; width: 100% !important; max-width: 100% !important; 
                 margin: 0 !important; padding: 0 !important; box-shadow: none !important; 
                 border: none !important; background: transparent !important; 
             }
             
+            #printPagesContainer { display: block !important; width: 100%; }
+            
+            /* هندسة الصفحة: بنية Block ثابتة وإحداثيات صارمة تمنع انكماش المتصفح */
+            .print-page { 
+                width: 100%;
+                height: 190mm; /* أقصى ارتفاع آمن لورقة A4 بالعرض مع هوامش 10mm */
+                max-height: 190mm;
+                page-break-after: always; 
+                page-break-inside: avoid;
+                position: relative; /* ضروري لتثبيت الفوتر بداخله بوضعية مطلقة */
+                display: block; 
+                box-sizing: border-box;
+                padding-bottom: 25mm; /* ترك مساحة سفلية للفوتر حتى لا يغطي الجدول */
+                overflow: hidden; /* يمنع أي محتوى زائد من تشويه الورقة */
+            }
+            .print-page:last-child { page-break-after: auto; }
+
             .print-only { display: block !important; }
             
-            /* الترويسة والعناوين */
-            .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 15px; font-weight: bold; font-size: 14px; text-align: center; }
-            .print-title { text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 15px; text-decoration: underline; }
+            /* الترويسة الرئيسية */
+            .print-header { 
+                display: flex; justify-content: space-between; align-items: center; 
+                border-bottom: 3px double #000; padding-bottom: 5px; margin-bottom: 10px; 
+                font-weight: bold; font-size: 11pt; text-align: center; 
+            }
+            .print-header > div { flex: 1; }
+            .print-header img { filter: grayscale(100%); max-width: 60px; height: auto; }
             
-            /* قسم الإحصائيات - منظم لمنع الانهيار */
-            .analytics-section { border: 2px solid #000 !important; padding: 10px !important; margin-bottom: 15px !important; background: transparent !important; page-break-inside: avoid; }
-            .report-grid { display: flex; flex-direction: row; flex-wrap: nowrap; gap: 5px; }
-            .report-card { flex: 1; border: 1px solid #000 !important; padding: 5px !important; box-shadow: none !important; min-width: 0; display: flex; flex-direction: column; justify-content: center; align-items: center;}
-            .report-card h4 { font-size: 12px; margin: 0 0 5px 0; text-align: center; color: #000 !important;}
-            .report-card .main-num { font-size: 16px; margin: 0; color: #000 !important;}
-            .report-card .sub-stats { font-size: 10px; display: flex; flex-direction: column; gap: 2px; margin-top: 5px; border-top: 1px solid #ccc; width: 100%; text-align: center; color: #000 !important;}
-            .issues-breakdown { border: 1px solid #000 !important; box-shadow: none !important; margin-top: 10px; padding: 5px !important;}
+            /* تصميم صفحة الإحصائيات (الغلاف) */
+            .stats-cover-title {
+                text-align: center; font-size: 16pt; font-weight: 900; color: #000;
+                margin: 10px auto; padding: 8px; border: 2px solid #000; background-color: #f0f0f0 !important;
+                border-radius: 8px; width: 80%; text-shadow: none;
+            }
             
-            /* إعدادات الجدول ليتوافق مع A4 ويتجنب الاقتصاص (Table Layout Fixed) */
-            .table-responsive { overflow: visible !important; max-height: none !important; border: none !important; box-shadow: none !important; }
-            table { border-collapse: collapse !important; width: 100% !important; table-layout: fixed !important; font-size: 12px !important; }
+            .print-stats-grid {
+                display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; width: 90%; margin-left: auto; margin-right: auto;
+            }
             
-            /* تكرار ترويسة الجدول في كل صفحة مطبوعة */
-            thead { display: table-header-group !important; } 
+            .p-stat-card {
+                border: 2px solid #333; border-radius: 8px; padding: 15px; text-align: center; background-color: #fff !important;
+                box-shadow: inset 0 0 0 3px #f9f9f9 !important;
+            }
             
-            /* منع انقسام محتوى الصف بين صفحتين */
-            tr { page-break-inside: avoid !important; } 
+            .p-stat-card h4 { margin: 0 0 10px 0; font-size: 14pt; font-weight: bold; color: #333; border-bottom: 1px dashed #ccc; padding-bottom: 8px;}
+            .p-stat-card .p-num { font-size: 28pt; font-weight: 900; margin: 8px 0; }
+            .p-stat-card .p-sub { font-size: 11pt; color: #555; font-weight: bold; }
             
-            /* السماح بالتفاف النص (Word Wrap) بدلاً من زيادة عرض الجدول */
-            th, td { border: 1px solid #000 !important; padding: 6px 4px !important; text-align: center !important; white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; overflow: visible !important; }
-            
-            /* توزيع هندسي ثابت للأعمدة (إجمالي 100%) لضمان ملاءمة الورقة */
-            th:nth-child(1) { width: 4%; }  /* م */
-            th:nth-child(2) { width: 12%; } /* كود الطالب */
-            th:nth-child(3) { width: 23%; } /* الاسم الرباعي */
-            th:nth-child(4) { width: 8%; }  /* النوع */
-            th:nth-child(5) { width: 12%; } /* الصف */
-            th:nth-child(6) { width: 10%; } /* النظام */
-            th:nth-child(7) { width: 14%; } /* الحالة التشخيصية */
-            th:nth-child(8) { width: 17%; } /* التفاصيل */
+            .print-issues-box {
+                margin: 20px auto; width: 90%; border: 2px solid #666; border-radius: 8px; padding: 15px;
+            }
+            .print-issues-box h4 { margin-top: 0; font-size: 13pt; border-bottom: 2px solid #000; display: inline-block; padding-bottom: 5px;}
+            .p-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+            .p-issue-tag {
+                background-color: #fee2e2 !important; color: #991b1b !important; padding: 6px 12px;
+                border-radius: 6px; font-size: 11pt; font-weight: bold; border: 1px solid #991b1b;
+            }
 
-            /* التنسيقات اللونية وإخفاء أعمدة الإجراءات */
-            th { background-color: #e6e6e6 !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; font-weight: bold !important; color: #000 !important;}
-            th.no-print, td.no-print { display: none !important; width: 0 !important; padding: 0 !important; border: none !important;}
+            .print-title { 
+                text-align: center; font-size: 12pt; font-weight: 900; 
+                margin: 0 auto 8px auto; background-color: #e9ecef !important; 
+                padding: 4px 15px; border: 2px solid #000; border-radius: 6px; 
+                width: fit-content;
+            }
+
+            /* إعدادات الجدول الصارمة لأقصى عدد من الصفوف (30 صف) */
+            .print-table { 
+                border-collapse: collapse !important; width: 100% !important; 
+                table-layout: fixed !important; 
+                font-size: 11pt !important; 
+                border: 2px solid #000 !important;
+            }
             
-            .status-badge { background: transparent !important; color: #000 !important; border: none !important; padding: 0 !important; font-size: inherit !important; }
+            .print-table th, .print-table td { 
+                border: 1px solid #000 !important; 
+                padding: 1px 4px !important; 
+                text-align: center !important; vertical-align: middle !important;
+                /* قفل التفاف النص وإجبار الصف على ارتفاع موحد */
+                white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; 
+                height: 22px !important; max-height: 22px !important; line-height: 20px !important;
+            }
             
-            /* التوقيعات */
-            .signatures { display: flex; justify-content: space-between; margin-top: 30px; padding-top: 20px; font-weight: bold; page-break-inside: avoid; text-align: center; }
-            .signatures div { width: 30%; }
+            .print-table th { 
+                background-color: #dcdcdc !important; color: #000 !important; 
+                font-weight: 900 !important; font-size: 11pt !important;
+                border-bottom: 2px solid #000 !important;
+            }
+
+            /* نسب عرض الأعمدة محسوبة بدقة */
+            .print-table th:nth-child(1) { width: 4%; }
+            .print-table th:nth-child(2) { width: 14%; }
+            .print-table th:nth-child(3) { width: 25%; }
+            .print-table th:nth-child(4) { width: 6%; }
+            .print-table th:nth-child(5) { width: 14%; }
+            .print-table th:nth-child(6) { width: 10%; }
+            .print-table th:nth-child(7) { width: 12%; }
+            .print-table th:nth-child(8) { width: 15%; }
+
+            /* الفوتر المطلق: يتم تثبيته في أسفل كل صفحة (.print-page) بالملي */
+            .print-footer-container {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 25mm; /* يتطابق مع الـ padding-bottom للصفحة */
+                background: #fff; /* لضمان عدم الشفافية فوق أي خطأ */
+            }
+            
+            /* التوقيعات الكبيرة (لصفحة الغلاف) */
+            .signatures-large { 
+                display: flex; justify-content: space-between; align-items: flex-end; 
+                padding-top: 10px; border-top: 2px solid #000;
+                font-weight: bold; text-align: center; font-size: 12pt; margin-top: 10px;
+            }
+            .signatures-large .sig-box { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;}
+            .stamp-area { 
+                width: 70px; height: 70px; border: 2px solid #000; border-radius: 50%; 
+                display: flex; align-items: center; justify-content: center; 
+                color: #333; font-size: 9pt; transform: rotate(-15deg);
+                background-color: rgba(0,0,0,0.03) !important;
+            }
+            
+            /* التوقيعات المصغرة (لصفحات الكشوف) */
+            .signatures-mini {
+                display: flex; justify-content: space-between; align-items: center;
+                padding-top: 5px; border-top: 1px dashed #555;
+                font-weight: bold; text-align: center; font-size: 10pt;
+                margin-top: 5px;
+            }
+            .signatures-mini > div { flex: 1; }
+
+            .page-number { text-align: left; font-size: 9pt; margin-top: 5px; font-weight: bold; color: #333; direction: ltr;}
         }
     </style>
 </head>
@@ -264,7 +316,6 @@
     <div class="content-placeholder">
         
         <div id="student-section" class="glass-panel">
-            
             <div class="sprix-container">
                 <a href="https://sprixportal.jp/contact-ar.html" target="_blank" class="sprix-btn">
                     <i class="fas fa-globe-asia"></i>
@@ -335,25 +386,29 @@
 
         <div id="admin-section" class="glass-panel admin-panel hidden">
             
-            <div class="print-only print-header">
-                <div>محافظة التربية والتعليم<br>إدارة التربية والتعليم<br>مدرسة محمد هاشم النقيب الثانوية المشتركة</div>
-                <div><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Eagle_of_Saladin.svg/100px-Eagle_of_Saladin.svg.png" width="55" alt="شعار"></div>
-                <div>كنترول التقييم التكنولوجي<br>التقرير الإحصائي والتفصيلي لامتحان توفاس<br>التاريخ: <span id="printDate"></span></div>
-            </div>
-            <div class="print-only print-title">سجل الحصر المفهرس لحالات طلاب المدرسة</div>
-
             <h2 class="section-title"><i class="fas fa-chart-line"></i> لوحة الإدارة والتقرير التفصيلي (متصلة بالسحابة)</h2>
             
             <div class="controls-bar dashboard-actions">
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <button onclick="window.print()" class="btn-outline"><i class="fas fa-print"></i> طباعة</button>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items: center;">
+                    <button onclick="prepareAndPrint()" class="btn-outline"><i class="fas fa-print"></i> طباعة التقرير الشامل</button>
                     <button onclick="exportToCSV()" class="btn-success"><i class="fas fa-file-excel"></i> إكسيل</button>
-                    <button onclick="removeDuplicates()" class="btn-warning"><i class="fas fa-magic"></i> إزالة التكرار والتنظيف</button>
-                    <button onclick="fetchCloudData()" id="refreshBtn" class="btn-info"><i class="fas fa-sync-alt"></i> جلب المزامنة التلقائية</button>
+                    <button onclick="removeDuplicatesFast()" class="btn-warning"><i class="fas fa-magic"></i> التنظيف السريع للتكرار</button>
+                    <button onclick="fetchCloudData()" id="refreshBtn" class="btn-info"><i class="fas fa-sync-alt"></i> تحديث السحابة</button>
                 </div>
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="ابحث بالاسم، الكود..." onkeyup="filterTable()">
-                    <i class="fas fa-search"></i>
+                
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <div class="sort-box">
+                        <select id="sortSelect" onchange="applySort()">
+                            <option value="newest">فرز: الأحدث تسجيلاً</option>
+                            <option value="oldest">فرز: الأقدم تسجيلاً</option>
+                            <option value="name_asc">فرز: الاسم (أ - ي)</option>
+                            <option value="grade_asc">فرز: الصف الدراسي</option>
+                        </select>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="ابحث بالاسم، الكود..." onkeyup="filterTable()">
+                        <i class="fas fa-search"></i>
+                    </div>
                 </div>
             </div>
 
@@ -400,6 +455,7 @@
                             <th>النظام</th>
                             <th>الحالة التشخيصية</th>
                             <th>التفاصيل</th>
+                            <th class="no-print">الجهاز المستخدم</th>
                             <th class="no-print">وقت التسجيل</th>
                             <th class="no-print">إجراء</th>
                         </tr>
@@ -407,6 +463,8 @@
                     <tbody id="tableBody"></tbody>
                 </table>
             </div>
+
+            <div id="printPagesContainer" class="print-only"></div>
 
             <div class="settings-box" style="margin-top: 30px;">
                 <h3 class="analytics-title" style="font-size:16px;"><i class="fas fa-cogs"></i> إعدادات المزامنة المركزية مع Google Sheets</h3>
@@ -428,12 +486,6 @@
                     <button onclick="saveSettings()" class="btn-outline"><i class="fas fa-save"></i> حفظ الإعدادات</button>
                     <button onclick="clearData()" class="btn-danger"><i class="fas fa-trash-alt"></i> تفريغ العرض الحالي</button>
                 </div>
-            </div>
-
-            <div class="print-only signatures">
-                <div>مسئول التطوير التكنولوجي<br>.......................</div>
-                <div>رئيس الكنترول<br>.......................</div>
-                <div>مدير إدارة المدرسة<br>.......................</div>
             </div>
 
         </div>
@@ -465,6 +517,26 @@
             systems: ['منتظم', 'خدمات'], 
             scriptUrl: 'https://script.google.com/macros/s/AKfycbxxgHOvMjXzrC2aHNn3XLJ_UslWhs6YIo94e-bfowIHTFm9MZ_8slnD8J2o7bSTHrDu/exec' 
         };
+
+        function getDeviceInfo() {
+            try {
+                const ua = navigator.userAgent;
+                let deviceOS = "نظام غير معروف";
+                if (/windows/i.test(ua)) deviceOS = "Windows";
+                else if (/android/i.test(ua)) deviceOS = "Android";
+                else if (/ipad|iphone|ipod/i.test(ua)) deviceOS = "iOS";
+                else if (/mac/i.test(ua)) deviceOS = "Mac";
+                else if (/linux/i.test(ua)) deviceOS = "Linux";
+                
+                let deviceType = "كمبيوتر";
+                if (/mobile/i.test(ua)) deviceType = "موبايل";
+                else if (/tablet/i.test(ua) || (deviceOS === "Android" && !/mobile/i.test(ua)) || (deviceOS === "iOS" && !/iphone/i.test(ua))) deviceType = "تابلت";
+                
+                return `${deviceType} (${deviceOS})`;
+            } catch (e) {
+                return "جهاز غير معروف";
+            }
+        }
 
         function loadSettings() {
             const saved = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
@@ -525,7 +597,6 @@
             if(document.getElementById('adminPwd').value === 'MrMahmoud') {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('admin-section').classList.remove('hidden');
-                document.getElementById('printDate').innerText = new Date().toLocaleDateString('ar-EG');
                 
                 fetchCloudData();
                 showToast('أهلاً بك، جاري سحب البيانات المركزية...', 'info');
@@ -546,7 +617,7 @@
             
             if(!finalUrl) {
                 showToast('لم يتم العثور على رابط السيرفر', 'warning');
-                updateDashboard([]);
+                applySort(); 
                 return;
             }
 
@@ -557,8 +628,19 @@
                 .then(res => res.json())
                 .then(response => {
                     if(response.status === 'success') {
-                        localStorage.setItem('tofasData', JSON.stringify(response.data));
-                        updateDashboard(response.data);
+                        const localData = JSON.parse(localStorage.getItem('tofasData')) || [];
+                        const cloudData = response.data.map(cloudRec => {
+                            if (!cloudRec.deviceInfo || cloudRec.deviceInfo === 'undefined' || cloudRec.deviceInfo === '') {
+                                const existingLocal = localData.find(r => String(r.id) === String(cloudRec.id));
+                                cloudRec.deviceInfo = (existingLocal && existingLocal.deviceInfo && existingLocal.deviceInfo !== 'undefined') 
+                                                      ? existingLocal.deviceInfo 
+                                                      : "غير مسجل";
+                            }
+                            return cloudRec;
+                        });
+
+                        localStorage.setItem('tofasData', JSON.stringify(cloudData));
+                        applySort(); 
                         showToast('تمت المزامنة اللحظية مع السحابة بنجاح', 'success');
                     } else {
                         showToast('خطأ من السيرفر: ' + response.message, 'error');
@@ -566,10 +648,10 @@
                 })
                 .catch(err => {
                     showToast('تم استخدام البيانات المحلية بسبب ضعف الاتصال', 'warning');
-                    updateDashboard(JSON.parse(localStorage.getItem('tofasData')) || []);
+                    applySort(); 
                 })
                 .finally(() => {
-                    btn.innerHTML = '<i class="fas fa-sync-alt"></i> جلب المزامنة التلقائية';
+                    btn.innerHTML = '<i class="fas fa-sync-alt"></i> تحديث السحابة';
                 });
         }
 
@@ -599,6 +681,14 @@
                 }
             }
             
+            let currentDeviceInfo = getDeviceInfo();
+            if (actionType === 'edit') {
+                const existingRec = localData.find(r => String(r.id) === String(editId));
+                if (existingRec && existingRec.deviceInfo && existingRec.deviceInfo !== 'undefined') {
+                    currentDeviceInfo = existingRec.deviceInfo;
+                }
+            }
+
             const data = {
                 action: actionType,
                 id: editId || Date.now(),
@@ -609,7 +699,8 @@
                 grade: document.getElementById('studentGrade').value,
                 system: document.getElementById('studentSystem').value,
                 type: document.getElementById('issueType').value,
-                details: document.getElementById('issueDetails').value || 'لا يوجد'
+                details: document.getElementById('issueDetails').value || 'لا يوجد',
+                deviceInfo: currentDeviceInfo
             };
 
             const settings = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
@@ -624,7 +715,7 @@
                 localData.push(data);
             }
             localStorage.setItem('tofasData', JSON.stringify(localData));
-            updateDashboard(localData);
+            applySort(); 
 
             fetch(finalUrl, {
                 method: 'POST', mode: 'no-cors',
@@ -693,7 +784,7 @@
                     if(recordIndex !== -1) {
                         localData.splice(recordIndex, 1);
                         localStorage.setItem('tofasData', JSON.stringify(localData));
-                        updateDashboard(localData);
+                        applySort();
                         showToast('جاري إرسال أمر الحذف للسحابة...', 'info');
 
                         const settings = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
@@ -713,18 +804,17 @@
             });
         }
 
-        // --- تحديث وتطوير دالة إزالة التكرار مع شاشة الانتظار والرسالة العالمية ---
-        async function removeDuplicates() {
+        function removeDuplicatesFast() {
             Swal.fire({
-                title: 'إدارة السجلات الذكية',
-                text: 'سيتم فحص قاعدة البيانات والاحتفاظ بالنسخة الأحدث لكل طالب، مع إزالة التكرارات نهائياً من النظام والسحابة. هل تريد البدء؟',
+                title: 'التنظيف الذكي السريع',
+                text: 'سيتم فحص وإزالة التكرارات فوراً من لوحتك ليتم ترتيبها، وسيقوم النظام بتحديث السحابة تلقائياً في الخلفية دون تعطيل عملك. هل توافق؟',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#004b99',
                 cancelButtonColor: '#6c757d',
-                confirmButtonText: '<i class="fas fa-magic"></i> نعم، ابدأ التنظيف',
+                confirmButtonText: '<i class="fas fa-bolt"></i> نعم، نظف الآن',
                 cancelButtonText: 'إلغاء'
-            }).then(async (result) => {
+            }).then((result) => {
                 if (result.isConfirmed) {
                     let localData = JSON.parse(localStorage.getItem('tofasData')) || [];
                     let grouped = {};
@@ -750,85 +840,82 @@
                     }
 
                     if (idsToDelete.length === 0) {
-                        Swal.fire({
-                            title: 'النظام نظيف',
-                            text: 'لا توجد أي سجلات مكررة في قاعدة البيانات الحالية.',
-                            icon: 'success',
-                            confirmButtonColor: '#28a745'
-                        });
+                        Swal.fire({ title: 'النظام نظيف', text: 'لا توجد أي سجلات مكررة في لوحتك.', icon: 'success', confirmButtonColor: '#28a745' });
                         return;
                     }
 
-                    // شاشة تحميل قفلية احترافية تمنع التدخل أثناء الحذف المتسلسل
-                    Swal.fire({
-                        title: 'جاري التنظيف السحابي',
-                        html: `يتم الآن معالجة وحذف <b>${idsToDelete.length}</b> سجل مكرر من السيرفر المركزي.<br>الرجاء عدم إغلاق النافذة...`,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        showConfirmButton: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-
                     localStorage.setItem('tofasData', JSON.stringify(finalLocalData));
-                    updateDashboard(finalLocalData);
+                    applySort(); 
 
-                    const settings = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
-                    const finalUrl = settings.scriptUrl || defaultSettings.scriptUrl;
-
-                    let successCount = 0;
-                    
-                    // الحذف المتسلسل (انتظار 800 ملي ثانية بين كل طلب لتفادي حظر جوجل)
-                    for (let i = 0; i < idsToDelete.length; i++) {
-                        try {
-                            await fetch(finalUrl, {
-                                method: 'POST', mode: 'no-cors',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ action: 'delete', id: idsToDelete[i] })
-                            });
-                            successCount++;
-                            await new Promise(resolve => setTimeout(resolve, 800));
-                        } catch (error) {
-                            console.error('حدث خطأ أثناء حذف السجل المكرر:', idsToDelete[i]);
-                        }
-                    }
-
-                    // رسالة النجاح العالمية الاحترافية بعد انتهاء اللوب
                     Swal.fire({
                         icon: 'success',
-                        title: 'اكتملت المزامنة بنجاح',
+                        title: 'تم التنظيف السريع بنجاح!',
                         html: `
-                            <div style="text-align: right; direction: rtl; font-size: 16px;">
-                                <p style="color: #004b99; font-weight: bold; margin-bottom: 15px;"><i class="fas fa-shield-alt"></i> تم تنظيف قاعدة البيانات وتحديث السحابة المركزية.</p>
-                                <div style="background: #f8fbff; border: 1px solid #cce5ff; border-radius: 8px; padding: 15px;">
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                        <span>السجلات المكررة التي أُزيلت:</span>
-                                        <span style="font-weight: bold; color: #dc3545;">${successCount} سجل</span>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span>استقرار قاعدة البيانات:</span>
-                                        <span style="font-weight: bold; color: #28a745;">مستقرة <i class="fas fa-check-circle"></i></span>
-                                    </div>
-                                </div>
-                                <p style="font-size: 13px; color: #777; margin-top: 15px;"><i class="fas fa-info-circle"></i> النظام الآن محدث وخالٍ من الإدخالات المكررة محلياً وسحابياً.</p>
+                            <div style="text-align: right; font-size: 15px;">
+                                <p style="color: #28a745; font-weight: bold;"><i class="fas fa-check-circle"></i> تم إزالة <b>${idsToDelete.length}</b> سجل مكرر من لوحة التحكم.</p>
+                                <p style="font-size: 13px; color: #6c757d; margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                                    <i class="fas fa-sync fa-spin" style="color: #004b99;"></i> جاري الآن مزامنة هذا الحذف مع السيرفر السحابي ببطء في الخلفية. <b>يمكنك استكمال عملك الآن بشكل طبيعي جداً ولن يؤثر ذلك عليك.</b>
+                                </p>
                             </div>
                         `,
-                        confirmButtonText: 'إغلاق ومتابعة العمل',
-                        confirmButtonColor: '#004b99',
-                        width: '500px'
+                        confirmButtonText: 'إكمال العمل',
+                        confirmButtonColor: '#004b99'
                     });
+
+                    syncDeletionsInBackground(idsToDelete);
                 }
             });
         }
 
-        function updateDashboard(recordsData) {
+        async function syncDeletionsInBackground(idsList) {
+            const settings = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
+            const finalUrl = settings.scriptUrl || defaultSettings.scriptUrl;
+            
+            for (let i = 0; i < idsList.length; i++) {
+                try {
+                    await fetch(finalUrl, {
+                        method: 'POST', mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'delete', id: idsList[i] })
+                    });
+                    await new Promise(resolve => setTimeout(resolve, 800)); 
+                } catch (error) {
+                    console.error('Background Sync Delete Error:', idsList[i]);
+                }
+            }
+            console.log("تمت مزامنة الحذف المتسلسل في الخلفية بنجاح.");
+        }
+
+        function applySort() {
+            let recordsData = JSON.parse(localStorage.getItem('tofasData')) || [];
+            let sortVal = document.getElementById('sortSelect').value;
+            
+            let sortedRecords = [...recordsData];
+            
+            if (sortVal === 'newest') {
+                sortedRecords.sort((a, b) => b.id - a.id);
+            } else if (sortVal === 'oldest') {
+                sortedRecords.sort((a, b) => a.id - b.id);
+            } else if (sortVal === 'name_asc') {
+                sortedRecords.sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+            } else if (sortVal === 'grade_asc') {
+                sortedRecords.sort((a, b) => {
+                    let gradeComp = a.grade.localeCompare(b.grade, 'ar');
+                    if (gradeComp === 0) return a.name.localeCompare(b.name, 'ar');
+                    return gradeComp;
+                });
+            }
+
+            updateDashboard(sortedRecords, sortVal);
+        }
+
+        function updateDashboard(recordsData, sortVal = 'newest') {
             const records = recordsData || [];
             let stats = { tot: records.length, tB: 0, tG: 0, regTot: 0, regB: 0, regG: 0, servTot: 0, servB: 0, servG: 0, issuesTot: 0, successTot: 0, issuesMap: {} };
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
             
-            records.slice().reverse().forEach((rec, index) => {
+            records.forEach((rec, index) => {
                 if(rec.gender === 'طالب') stats.tB++; if(rec.gender === 'طالبة') stats.tG++;
                 if(rec.system && rec.system.includes('منتظم')) {
                     stats.regTot++; if(rec.gender === 'طالب') stats.regB++; if(rec.gender === 'طالبة') stats.regG++;
@@ -840,9 +927,14 @@
                 else { stats.issuesTot++; stats.issuesMap[rec.type] = (stats.issuesMap[rec.type] || 0) + 1; }
 
                 let badgeClass = rec.type && rec.type.includes('بنجاح') ? 'status-success' : 'status-error';
+                
+                let devInfo = (rec.deviceInfo && rec.deviceInfo !== 'undefined' && rec.deviceInfo !== '') 
+                              ? rec.deviceInfo 
+                              : "غير مسجل";
+                
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${records.length - index}</td>
+                    <td>${index + 1}</td>
                     <td style="font-weight:bold; letter-spacing:1px;">${rec.code}</td>
                     <td style="font-weight:bold;">${rec.name}</td>
                     <td>${rec.gender}</td>
@@ -850,6 +942,7 @@
                     <td>${rec.system}</td>
                     <td><span class="status-badge ${badgeClass}">${rec.type}</span></td>
                     <td style="font-size:12px; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${rec.details}">${rec.details}</td>
+                    <td class="no-print"><span class="device-badge" title="${devInfo}"><i class="fas ${devInfo.includes('موبايل') ? 'fa-mobile-alt' : devInfo.includes('تابلت') ? 'fa-tablet-alt' : 'fa-laptop'}"></i> ${devInfo}</span></td>
                     <td class="no-print" style="font-size:11px; color:#777;">${rec.timestamp}</td>
                     <td class="no-print">
                         <button class="action-btn edit-btn" onclick="editRecord('${rec.id}')" title="تعديل"><i class="fas fa-edit"></i></button>
@@ -879,6 +972,149 @@
             }
         }
 
+        // ================= دالة الطباعة الحديدية =================
+        function prepareAndPrint() {
+            const tableBody = document.getElementById('tableBody');
+            const visibleRows = Array.from(tableBody.querySelectorAll('tr')).filter(tr => tr.style.display !== 'none');
+            
+            const container = document.getElementById('printPagesContainer');
+            container.innerHTML = ''; 
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            const printDateStr = new Date().toLocaleDateString('ar-EG', options);
+
+            // استخراج الإحصائيات الحالية
+            const tTotal = document.getElementById('repTotal').innerText;
+            const tBoys = document.getElementById('repTotalBoys').innerText;
+            const tGirls = document.getElementById('repTotalGirls').innerText;
+            const tSuccess = document.getElementById('repSuccessTotal').innerText;
+            const tIssues = document.getElementById('repIssuesTotal').innerText;
+            
+            // تحويل علامات المشكلات (Tags) إلى شكل مناسب للطباعة
+            let rawTagsHtml = document.getElementById('issuesTagsContainer').innerHTML;
+            let printTagsHtml = rawTagsHtml.replace(/issue-tag/g, 'p-issue-tag');
+
+            const headerTemplate = `
+                <div class="print-header">
+                    <div style="line-height: 1.6; text-align: right;">محافظة التربية والتعليم<br>إدارة التربية والتعليم<br>مدرسة محمد هاشم النقيب الثانوية المشتركة</div>
+                    <div><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Eagle_of_Saladin.svg/100px-Eagle_of_Saladin.svg.png" width="70" alt="شعار النسر"></div>
+                    <div style="line-height: 1.6; text-align: left;">كنترول التقييم التكنولوجي<br>التقرير الإحصائي والتفصيلي لامتحان توفاس<br>تاريخ الطباعة: ${printDateStr}</div>
+                </div>
+            `;
+
+            // 1. بناء صفحة الغلاف الإحصائية الرسمية (Page 1)
+            const statsPage = document.createElement('div');
+            statsPage.className = 'print-page';
+            statsPage.innerHTML = `
+                ${headerTemplate}
+                <div class="stats-cover-title">التقرير الإحصائي الشامل لنتائج التقييم التفاعلي (توفاس)</div>
+                
+                <div class="print-stats-grid">
+                    <div class="p-stat-card" style="border-top-color: #004b99;">
+                        <h4>إجمالي المسجلين</h4>
+                        <div class="p-num" style="color: #004b99;">${tTotal}</div>
+                        <div class="p-sub">بنين: ${tBoys} | بنات: ${tGirls}</div>
+                    </div>
+                    <div class="p-stat-card" style="border-top-color: #28a745;">
+                        <h4>تم الاختبار بنجاح</h4>
+                        <div class="p-num" style="color: #28a745;">${tSuccess}</div>
+                        <div class="p-sub">حالة مكتملة ومستقرة تماماً</div>
+                    </div>
+                    <div class="p-stat-card" style="border-top-color: #dc3545; grid-column: span 2;">
+                        <h4>إجمالي المشكلات التقنية المسجلة</h4>
+                        <div class="p-num" style="color: #dc3545;">${tIssues}</div>
+                        <div class="p-sub">حالة تتطلب الفحص والمراجعة</div>
+                    </div>
+                </div>
+
+                <div class="print-issues-box">
+                    <h4>التصنيف الدقيق للمشكلات المسجلة:</h4>
+                    <div class="p-tags">${printTagsHtml}</div>
+                </div>
+
+                <div class="print-footer-container">
+                    <div class="signatures-large">
+                        <div class="sig-box">مسئول التطوير التكنولوجي<br><br>.......................</div>
+                        <div class="sig-box"><div class="stamp-area">الختم الرسمي</div></div>
+                        <div class="sig-box">رئيس الكنترول<br><br>.......................</div>
+                        <div class="sig-box">مدير إدارة المدرسة<br><br>.......................</div>
+                    </div>
+                    <div class="page-number" style="text-align:center;">تقرير إحصائي معتمد - صفحة 1</div>
+                </div>
+            `;
+            container.appendChild(statsPage);
+
+            // 2. بناء صفحات كشوف البيانات المجدولة (كل صفحة 30 صف إجبارياً)
+            const rowsPerPage = 30; 
+            const totalPages = Math.ceil(visibleRows.length / rowsPerPage) || 1;
+
+            for (let i = 0; i < totalPages; i++) {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'print-page';
+                
+                let pageHTML = `${headerTemplate}<div class="print-title">السجل الشامل والمفهرس لحالات طلاب المدرسة</div>`;
+                
+                pageHTML += `<div class="print-table-container">
+                    <table class="print-table">
+                        <thead>
+                            <tr>
+                                <th>م</th>
+                                <th>كود الطالب</th>
+                                <th>الاسم الرباعي</th>
+                                <th>النوع</th>
+                                <th>الصف</th>
+                                <th>النظام</th>
+                                <th>الحالة التشخيصية</th>
+                                <th>التفاصيل</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                
+                const startIdx = i * rowsPerPage;
+                for (let j = 0; j < rowsPerPage; j++) {
+                    const dataIdx = startIdx + j;
+                    
+                    if (dataIdx < visibleRows.length) {
+                        const rowCells = visibleRows[dataIdx].querySelectorAll('td');
+                        pageHTML += `<tr>
+                            <td style="font-weight: bold;">${rowCells[0].innerText}</td>
+                            <td style="font-family: monospace; font-size: 13px;">${rowCells[1].innerText}</td>
+                            <td style="font-weight: bold;">${rowCells[2].innerText}</td>
+                            <td>${rowCells[3].innerText}</td>
+                            <td>${rowCells[4].innerText}</td>
+                            <td>${rowCells[5].innerText}</td>
+                            <td style="font-weight: bold;">${rowCells[6].innerText}</td>
+                            <td style="font-size: 10px;">${rowCells[7].innerText}</td>
+                        </tr>`;
+                    } else {
+                        pageHTML += `<tr>
+                            <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                            <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                        </tr>`;
+                    }
+                }
+                
+                pageHTML += `</tbody></table></div>`;
+                
+                pageHTML += `<div class="print-footer-container">
+                    <div class="signatures-mini">
+                        <div>توقيع التطوير: .................</div>
+                        <div class="page-number">كشوف البيانات - صفحة ${i + 2} من ${totalPages + 1}</div>
+                        <div>توقيع الكنترول: .................</div>
+                        <div>توقيع المدير: .................</div>
+                    </div>
+                </div>`;
+                
+                pageDiv.innerHTML = pageHTML;
+                container.appendChild(pageDiv);
+            }
+            
+            // إعطاء المتصفح مهلة نصف ثانية لرسم الصفحات والتأكد من عدم وجود مساحات بيضاء قبل استدعاء نافذة الطباعة
+            setTimeout(() => {
+                window.print();
+            }, 500);
+        }
+
         function clearData() {
             Swal.fire({
                 title: 'تنبيه خطير',
@@ -892,7 +1128,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     localStorage.removeItem('tofasData');
-                    updateDashboard([]);
+                    applySort();
                     Swal.fire('تم التفريغ!', 'تم تفريغ العرض بنجاح.', 'success');
                 }
             });
@@ -905,10 +1141,13 @@
                 return;
             }
 
-            let csvContent = "\uFEFFالوقت,الكود,الاسم,النوع,الصف,النظام,نوع المشكلة,التفاصيل\n";
+            let csvContent = "\uFEFFالوقت,الكود,الاسم,النوع,الصف,النظام,الجهاز المستخدم,نوع المشكلة,التفاصيل\n";
             records.forEach(r => {
                 let det = (r.details || "").replace(/,/g, "،").replace(/\n/g, " ");
-                csvContent += `${r.timestamp},${r.code},${r.name},${r.gender},${r.grade},${r.system},${r.type},${det}\n`;
+                let devInfo = (r.deviceInfo && r.deviceInfo !== 'undefined' && r.deviceInfo !== '') 
+                              ? r.deviceInfo 
+                              : "غير مسجل";
+                csvContent += `${r.timestamp},${r.code},${r.name},${r.gender},${r.grade},${r.system},${devInfo},${r.type},${det}\n`;
             });
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
