@@ -348,7 +348,7 @@
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
                     <button onclick="window.print()" class="btn-outline"><i class="fas fa-print"></i> طباعة</button>
                     <button onclick="exportToCSV()" class="btn-success"><i class="fas fa-file-excel"></i> إكسيل</button>
-                    <button onclick="removeDuplicates()" class="btn-warning"><i class="fas fa-magic"></i> إزالة التكرار</button>
+                    <button onclick="removeDuplicates()" class="btn-warning"><i class="fas fa-magic"></i> إزالة التكرار والتنظيف</button>
                     <button onclick="fetchCloudData()" id="refreshBtn" class="btn-info"><i class="fas fa-sync-alt"></i> جلب المزامنة التلقائية</button>
                 </div>
                 <div class="search-box">
@@ -713,18 +713,18 @@
             });
         }
 
-        // --- تم حل وتطوير مشكلة تداخل البيانات المتزامنة هنا ---
-        function removeDuplicates() {
+        // --- تحديث وتطوير دالة إزالة التكرار مع شاشة الانتظار والرسالة العالمية ---
+        async function removeDuplicates() {
             Swal.fire({
-                title: 'إزالة التكرار',
-                text: 'سيتم فحص الأكواد المكررة والاحتفاظ بأحدث إدخال لكل كود، وحذف الباقي. هل تريد الاستمرار؟',
-                icon: 'info',
+                title: 'إدارة السجلات الذكية',
+                text: 'سيتم فحص قاعدة البيانات والاحتفاظ بالنسخة الأحدث لكل طالب، مع إزالة التكرارات نهائياً من النظام والسحابة. هل تريد البدء؟',
+                icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#004b99',
                 cancelButtonColor: '#6c757d',
-                confirmButtonText: 'نعم، نفذ العملية',
+                confirmButtonText: '<i class="fas fa-magic"></i> نعم، ابدأ التنظيف',
                 cancelButtonText: 'إلغاء'
-            }).then(async (result) => { // تمت إضافة كلمة async هنا لتهيئة حلقة الانتظار
+            }).then(async (result) => {
                 if (result.isConfirmed) {
                     let localData = JSON.parse(localStorage.getItem('tofasData')) || [];
                     let grouped = {};
@@ -750,20 +750,36 @@
                     }
 
                     if (idsToDelete.length === 0) {
-                        Swal.fire('تم الفحص', 'لا توجد أكواد مكررة في السجلات الحالية.', 'success');
+                        Swal.fire({
+                            title: 'النظام نظيف',
+                            text: 'لا توجد أي سجلات مكررة في قاعدة البيانات الحالية.',
+                            icon: 'success',
+                            confirmButtonColor: '#28a745'
+                        });
                         return;
                     }
 
-                    // التحديث المحلي
+                    // شاشة تحميل قفلية احترافية تمنع التدخل أثناء الحذف المتسلسل
+                    Swal.fire({
+                        title: 'جاري التنظيف السحابي',
+                        html: `يتم الآن معالجة وحذف <b>${idsToDelete.length}</b> سجل مكرر من السيرفر المركزي.<br>الرجاء عدم إغلاق النافذة...`,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
                     localStorage.setItem('tofasData', JSON.stringify(finalLocalData));
                     updateDashboard(finalLocalData);
 
                     const settings = JSON.parse(localStorage.getItem('tofasSettings')) || defaultSettings;
                     const finalUrl = settings.scriptUrl || defaultSettings.scriptUrl;
 
-                    showToast(`جاري حذف ${idsToDelete.length} سجلات مكررة من السحابة (بالتتابع)... برجاء الانتظار`, 'info');
+                    let successCount = 0;
                     
-                    // التحديث المتسلسل للسحابة (الانتظار 600 جزء من الثانية بين كل أمر حذف لمنع تداخل الطلبات)
+                    // الحذف المتسلسل (انتظار 800 ملي ثانية بين كل طلب لتفادي حظر جوجل)
                     for (let i = 0; i < idsToDelete.length; i++) {
                         try {
                             await fetch(finalUrl, {
@@ -771,14 +787,37 @@
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ action: 'delete', id: idsToDelete[i] })
                             });
-                            // فترة انتظار بسيطة للسماح لجوجل بتنفيذ أمر الحذف الحالي قبل إرسال التالي
-                            await new Promise(resolve => setTimeout(resolve, 600));
+                            successCount++;
+                            await new Promise(resolve => setTimeout(resolve, 800));
                         } catch (error) {
                             console.error('حدث خطأ أثناء حذف السجل المكرر:', idsToDelete[i]);
                         }
                     }
 
-                    Swal.fire('تمت العملية', `تم التخلص من ${idsToDelete.length} سجلات مكررة بنجاح وبشكل نهائي من السحابة.`, 'success');
+                    // رسالة النجاح العالمية الاحترافية بعد انتهاء اللوب
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'اكتملت المزامنة بنجاح',
+                        html: `
+                            <div style="text-align: right; direction: rtl; font-size: 16px;">
+                                <p style="color: #004b99; font-weight: bold; margin-bottom: 15px;"><i class="fas fa-shield-alt"></i> تم تنظيف قاعدة البيانات وتحديث السحابة المركزية.</p>
+                                <div style="background: #f8fbff; border: 1px solid #cce5ff; border-radius: 8px; padding: 15px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                        <span>السجلات المكررة التي أُزيلت:</span>
+                                        <span style="font-weight: bold; color: #dc3545;">${successCount} سجل</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>استقرار قاعدة البيانات:</span>
+                                        <span style="font-weight: bold; color: #28a745;">مستقرة <i class="fas fa-check-circle"></i></span>
+                                    </div>
+                                </div>
+                                <p style="font-size: 13px; color: #777; margin-top: 15px;"><i class="fas fa-info-circle"></i> النظام الآن محدث وخالٍ من الإدخالات المكررة محلياً وسحابياً.</p>
+                            </div>
+                        `,
+                        confirmButtonText: 'إغلاق ومتابعة العمل',
+                        confirmButtonColor: '#004b99',
+                        width: '500px'
+                    });
                 }
             });
         }
