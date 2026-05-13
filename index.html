@@ -46,6 +46,57 @@
         .glass-panel.admin-panel { max-width: 1300px; padding: 30px; }
         .hidden { display: none !important; }
 
+        /* ================= زر منصة سباركس اليابانية 3D ================= */
+        .sprix-container {
+            margin-bottom: 35px;
+            text-align: center;
+            padding-bottom: 25px;
+            border-bottom: 2px dashed #ccc;
+        }
+        .sprix-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            background: linear-gradient(135deg, #e63946, #d90429);
+            color: #ffffff !important;
+            text-decoration: none;
+            font-size: 26px;
+            font-weight: 900;
+            padding: 18px 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 0 #8d0801, 0 15px 25px rgba(0,0,0,0.3);
+            transition: all 0.15s ease;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            border: 2px solid rgba(255,255,255,0.3);
+            animation: sprixPulse 2s infinite;
+        }
+        .sprix-btn:hover {
+            background: linear-gradient(135deg, #d90429, #e63946);
+            color: #ffffff;
+        }
+        .sprix-btn:active {
+            transform: translateY(10px);
+            box-shadow: 0 0 0 #8d0801, 0 5px 10px rgba(0,0,0,0.3);
+            animation: none;
+        }
+        @keyframes sprixPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        .sprix-hint {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+            font-weight: bold;
+            background: #fff3cd;
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid #ffeeba;
+        }
+
         /* النصوص والمدخلات */
         h2.section-title { text-align: center; color: var(--primary-blue); margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px dashed #ccc; font-weight: 900;}
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -213,7 +264,18 @@
     <div class="content-placeholder">
         
         <div id="student-section" class="glass-panel">
-            <h2 class="section-title" id="formTitle"><i class="fas fa-edit"></i> تسجيل الدخول والمشكلات</h2>
+            
+            <div class="sprix-container">
+                <a href="https://sprixportal.jp/contact-ar.html" target="_blank" class="sprix-btn">
+                    <i class="fas fa-globe-asia"></i>
+                    التسجيل للمشكلات على المنصة اليابانية
+                </a>
+                <span class="sprix-hint">
+                    <i class="fas fa-info-circle"></i> تنويه: يُرجى تسجيل حالتك في النموذج المدرسي بالأسفل أولاً، واستخدام الرابط الياباني أعلاه فقط للمشكلات التقنية المستعصية التي تتطلب دعم المنصة المركزية.
+                </span>
+            </div>
+
+            <h2 class="section-title" id="formTitle"><i class="fas fa-edit"></i> تسجيل الدخول والمشكلات (سجل المدرسة)</h2>
             <form id="tofasForm" onsubmit="submitForm(event)">
                 <input type="hidden" id="editRecordId" value="">
                 <div class="form-grid">
@@ -606,7 +668,7 @@
         function cancelEdit() {
             document.getElementById('tofasForm').reset();
             document.getElementById('editRecordId').value = '';
-            document.getElementById('formTitle').innerHTML = '<i class="fas fa-edit"></i> تسجيل الدخول والمشكلات';
+            document.getElementById('formTitle').innerHTML = '<i class="fas fa-edit"></i> تسجيل الدخول والمشكلات (سجل المدرسة)';
             document.getElementById('submitBtn').innerHTML = '<i class="fas fa-paper-plane"></i> إرسال وحفظ البيانات';
             document.getElementById('submitBtn').className = '';
             document.getElementById('cancelEditBtn').classList.add('hidden');
